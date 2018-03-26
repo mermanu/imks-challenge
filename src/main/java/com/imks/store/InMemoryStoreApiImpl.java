@@ -23,7 +23,7 @@ class InMemoryStoreApiImpl implements InMemoryStoreApi {
 
     @Override
     public void put(String nameSpace, String key, Serializable value) throws Exception {
-        nameSpaceStore.putOrGet(nameSpace).put(key, value);
+        nameSpaceStore.putOrGet(nameSpace).put(key, deepCopy.copy(value));
     }
 
     @Override

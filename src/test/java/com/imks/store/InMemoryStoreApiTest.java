@@ -31,7 +31,7 @@ public class InMemoryStoreApiTest {
     private static final String TEST_KEY = "test";
     private static final String[] CREATED_NAMESPACES = {"namespace1", "namespace2", "namespace3", "nothreadstest"};
     private static final int NUMBER_OF_THREAD_POOL = 8;
-    private static final int NUMBER_OF_THREADS = 300000;
+    private static final int NUMBER_OF_THREADS = 200000;
     private static final int SERVICE_AWAIT_TERMINATION_TIME = 3;
     InMemoryStoreApi inMemoryStoreApi;
 
