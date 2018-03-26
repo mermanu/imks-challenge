@@ -6,10 +6,10 @@
 package com.imks.store;
 
 import com.imks.store.util.SerializableObject;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -30,8 +30,8 @@ public class InMemoryStoreApiTest {
 
     private static final String TEST_KEY = "test";
     private static final String[] CREATED_NAMESPACES = {"namespace1", "namespace2", "namespace3", "nothreadstest"};
-    private static final int NUMBER_OF_THREAD_POOL = 5;
-    private static final int NUMBER_OF_THREADS = 100;
+    private static final int NUMBER_OF_THREAD_POOL = 8;
+    private static final int NUMBER_OF_THREADS = 300000;
     private static final int SERVICE_AWAIT_TERMINATION_TIME = 3;
     InMemoryStoreApi inMemoryStoreApi;
 
@@ -112,7 +112,6 @@ public class InMemoryStoreApiTest {
 
          while (true) {
             if (executorService.isTerminated()) {
-                Thread.sleep(500);
                 SerializableObject resultSerializableObject = (SerializableObject) inMemoryStoreApi.get(CREATED_NAMESPACES[0], TEST_KEY);
                 assertEquals(1, inMemoryStoreApi.values(CREATED_NAMESPACES[0]).size());
                 //it should be NUMBER_OF_THREAD_POOL since is the number we assign per each thread
@@ -147,7 +146,7 @@ public class InMemoryStoreApiTest {
      */
     @Test
     public void testWhenSomeThreadsAddKeyValuesConcurrentlyToANameSpaceThenValuesMethodReturnsTheCollectionWithTheRightValues() throws Exception {
-        List<String> listOfIds = new ArrayList<>();
+        List<String> listOfIds = new CopyOnWriteArrayList<>();
         ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREAD_POOL);
         for (int i = 0; i < NUMBER_OF_THREADS; i++) {
             executorService.execute(() -> {
@@ -167,14 +166,12 @@ public class InMemoryStoreApiTest {
         
         while (true) {
             if(executorService.isTerminated()){
-                Thread.sleep(500);
                 List<String> resultListOfIds = inMemoryStoreApi.values(CREATED_NAMESPACES[1]).stream()
                         .map(v -> ((SerializableObject) v).getThreadId())
                         .collect(Collectors.toList());
 
                 Collections.sort(listOfIds);
                 Collections.sort(resultListOfIds);
-                Thread.sleep(500);
                 assertArrayEquals(listOfIds.toArray(), resultListOfIds.toArray());
                 break;
             }
