@@ -13,7 +13,7 @@ import java.util.Collection;
  *
  * @author manuelmerida
  */
-class InMemoryStoreApiImpl implements InMemoryStoreApi {
+final class InMemoryStoreApiImpl implements InMemoryStoreApi {
 
     private final DeepCopy<Serializable> deepCopy = new DeepCopy<>();
     private final NameSpaceStore nameSpaceStore = NameSpaceStoreFactory.INSTANCE.get();
